@@ -1,0 +1,31 @@
+{
+  "name": "sentinoid-eco",
+  "version": "1.0.0",
+  "description": "Sentinoid ECO — Secure Private File Transfer (P2P, Compressed, Air-Gap Ready)",
+  "main": "src/server/server.js",
+  "scripts": {
+    "start": "node src/server/server.js",
+    "dev": "node src/server/server.js",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "webrtc",
+    "p2p",
+    "file-sharing",
+    "sentinoid",
+    "eco",
+    "security",
+    "air-gap",
+    "compression"
+  ],
+  "author": "Sentinoid Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}

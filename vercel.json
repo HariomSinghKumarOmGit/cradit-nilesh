@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "sentinoid-eco",
+  "builds": [
+    {
+      "src": "src/server/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/socket.io/(.*)",
+      "dest": "src/server/server.js"
+    },
+    {
+      "src": "/get-local-ip",
+      "dest": "src/server/server.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "src/server/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/server/server.js"
+    }
+  ]
+}
