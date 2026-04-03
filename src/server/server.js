@@ -60,12 +60,17 @@ function getLocalIP() {
 }
 
 // STATIC ROUTING: Configures Express to serve the frontend UI and client-side logic.
-const root = path.join(__dirname, "../../");
+const root = process.cwd();
 app.use(express.static(root));
 app.use(express.static(path.join(root, "public")));
 app.use(express.static(path.join(root, "src/compression")));
 app.use(express.static(path.join(root, "src/transport")));
 app.use(express.static(path.join(root, "src/ui")));
+
+// Explicitly send index.html for root requests
+app.get("/", (req, res) => {
+  res.sendFile(path.join(root, "index.html"));
+});
 
 const PORT = process.env.PORT || 3000;
 const localIP = getLocalIP();
@@ -136,12 +141,18 @@ io.on("connection", (socket) => {
 });
 
 // STARTUP: Output the dynamic local IP for easy testing across devices.
-http.listen(PORT, () => {
-  console.log(`\n=========================================`);
-  console.log(`🛡️  Sentinoid ECO Server is Live!`);
-  console.log(`=========================================`);
-  console.log(`💻 Local (This PC): http://localhost:${PORT}`);
-  console.log(`📱 Network (Phone): http://${localIP}:${PORT}`);
-  console.log(`🔒 Security: DTLS-SRTP | Air-Gap Ready`);
-  console.log(`=========================================\n`);
-});
+if (process.env.VERCEL) {
+  // Export the Express app for Vercel serverless deployment
+  module.exports = app;
+} else {
+  // Standard local/VPS deployment
+  http.listen(PORT, () => {
+    console.log(`\n=========================================`);
+    console.log(`🛡️  Sentinoid ECO Server is Live!`);
+    console.log(`=========================================`);
+    console.log(`💻 Local (This PC): http://localhost:${PORT}`);
+    console.log(`📱 Network (Phone): http://${localIP}:${PORT}`);
+    console.log(`🔒 Security: DTLS-SRTP | Air-Gap Ready`);
+    console.log(`=========================================\n`);
+  });
+}
