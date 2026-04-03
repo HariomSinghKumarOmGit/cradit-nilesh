@@ -58,9 +58,10 @@ function getLocalIP() {
 
   return preferredIP || fallbackIP;
 }
+// hello 
 
 // STATIC ROUTING: Configures Express to serve the frontend UI and client-side logic.
-const root = process.cwd();
+const root = process.cwd();//. changed
 app.use(express.static(root));
 app.use(express.static(path.join(root, "public")));
 app.use(express.static(path.join(root, "src/compression")));
