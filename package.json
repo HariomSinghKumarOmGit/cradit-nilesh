@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server/server.js",
     "dev": "node src/server/server.js",
+    "signal": "node src/server/signaling-standalone.js",
     "deploy": "vercel --prod"
   },
   "keywords": [

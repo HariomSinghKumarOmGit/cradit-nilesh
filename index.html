@@ -606,7 +606,15 @@
       aria-hidden="true"
     />
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+      // SIGNALING SERVER CONFIG
+      // Replace this URL with your deployed signaling server (Render.com / Railway / Glitch)
+      // For local development, use: http://localhost:3001
+      window.SIGNALING_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:3001'
+        : 'https://sentinoid-eco-signal.onrender.com';
+    </script>
     <script src="rle.js"></script>
     <script src="huffman.js"></script>
     <script src="webrtc.js"></script>

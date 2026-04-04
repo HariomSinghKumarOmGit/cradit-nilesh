@@ -1,28 +1,16 @@
 {
   "version": 2,
   "name": "sentinoid-eco",
-  "builds": [
-    {
-      "src": "src/server/server.js",
-      "use": "@vercel/node"
-    }
+  "rewrites": [
+    { "source": "/get-local-ip", "destination": "/api/get-local-ip" },
+    { "source": "/api/security-status", "destination": "/api/security-status" }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/socket.io/(.*)",
-      "dest": "src/server/server.js"
-    },
-    {
-      "src": "/get-local-ip",
-      "dest": "src/server/server.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "src/server/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "src/server/server.js"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }
