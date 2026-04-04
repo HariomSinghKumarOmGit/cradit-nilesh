@@ -13,7 +13,7 @@ No accounts. No uploads. No cloud. Just two browsers and a direct pipe between t
 
 ## Why ?
 
-| Feature | ECO | Cloud Storage (Drive, Dropbox) |
+| Feature | Cloud Storage (Drive, Dropbox) |
 |---|---|---|
 | Server stores your file | ❌ Never | ✅ Always |
 | Requires an account | ❌ No | ✅ Yes |
@@ -133,7 +133,7 @@ eco/
 
 ## Compression: Under the Hood
 
-ECO uses two complementary lossless compression algorithms that work together to maximize size reduction before any bytes hit the network.
+ uses two complementary lossless compression algorithms that work together to maximize size reduction before any bytes hit the network.
 
 ### Huffman Coding (`huffman.js`)
 Works in three phases:
@@ -149,7 +149,7 @@ A lightweight pre-pass that collapses consecutive repeated bytes into a count + 
 
 > **Combined pipeline:** RLE runs first to collapse repetition, then Huffman encodes the result at the bit level for maximum compression. Both algorithms are **lossless** — your files arrive byte-for-byte identical to what was sent.
 
-> Text-heavy files (source code, JSON, logs) compress best. Binary files (images, videos already compressed) see minimal gains — ECO detects this and skips compression when it would add overhead.
+> Text-heavy files (source code, JSON, logs) compress best. Binary files (images, videos already compressed) see minimal gains —  detects this and skips compression when it would add overhead.
 
 ---
 
