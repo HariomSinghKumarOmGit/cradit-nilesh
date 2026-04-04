@@ -1,24 +1,6 @@
-<div align="center">
-<div align="center">
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:0D1117,100:0D1117&height=160&text=ECO&fontSize=100&fontColor=34abeb&fontAlignY=55&desc=Efficient%20Compressed%20Operations&descAlignY=78&descSize=18&descColor=ffffff&stroke=00FFD1&strokeWidth=2" width="100%"/>
-</div>
 
- <img src="src/assets/logo.jpeg" width="350" alt="8INARYBINDERS Logo">
 
-*Private. Serverless. Blazing fast.*
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Built with WebRTC](https://img.shields.io/badge/Transport-WebRTC-blue)](https://webrtc.org/)
-[![Compression: Huffman](https://img.shields.io/badge/Compression-Huffman-orange)](https://en.wikipedia.org/wiki/Huffman_coding)
-
-</div>
-
----
-
-## What is ECO?
-
-**ECO** is a browser-based, peer-to-peer file transfer utility that never touches a server. Files travel directly from one device to another — compressed in memory, encrypted in transit, and gone without a trace once the session ends.
+**** is a browser-based, peer-to-peer file transfer utility that never touches a server. Files travel directly from one device to another — compressed in memory, encrypted in transit, and gone without a trace once the session ends.
 
 No accounts. No uploads. No cloud. Just two browsers and a direct pipe between them.
 
@@ -29,7 +11,7 @@ No accounts. No uploads. No cloud. Just two browsers and a direct pipe between t
 
 ---
 
-## Why ECO?
+## Why ?
 
 | Feature | ECO | Cloud Storage (Drive, Dropbox) |
 |---|---|---|
