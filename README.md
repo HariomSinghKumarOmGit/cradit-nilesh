@@ -26,12 +26,6 @@ No accounts. No uploads. No cloud. Just two browsers and a direct pipe between t
 
 ## Team
 
-| Member | Role |
-|---|---|
-| 👑 **Nilesh Kumar Singh** | Project Lead & Integration — architecture, roadmap, and binding it all together |
-| 🧠 **Raunak** | Compression Engineer — built the custom Huffman & RLE encoder/decoder from scratch |
-| 🎨 **Saksham** | UI/UX Designer — responsive landing page, file drop zone, and overall interface |
-| 🛰️ **Piyush Kumar** | Network Engineer — WebRTC P2P data channel & signaling server setup |
 
 ---
 
