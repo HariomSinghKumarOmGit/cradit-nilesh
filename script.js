@@ -232,7 +232,7 @@ function jumpToConnect() {
 
 function joinRoom(code) {
   window.myRoom = code;
-  socket.emit("join-room", code);
+  socket.joinRoom(code);
 }
 
 function doConnect() {
@@ -615,7 +615,10 @@ async function fetchServerIP() {
   try {
     const res = await fetch("/get-local-ip");
     const data = await res.json();
-    if (data.ip && data.ip !== "localhost") {
+    if (data.mode === "cloud") {
+      // Cloud deployment — use the deployed URL
+      serverBaseUrl = window.location.origin;
+    } else if (data.ip && data.ip !== "localhost") {
       serverBaseUrl = `http://${data.ip}:${data.port || 3000}`;
     }
   } catch (e) {
@@ -632,6 +635,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const initialCode = wordCode();
   $("my-code").textContent = initialCode;
   updateQRCode(initialCode);
+
+  // Auto-join our own room via Supabase signaling
+  window.myRoom = initialCode;
+  socket.joinRoom(initialCode);
 
   // Application routing evaluation: Scrape browser URL to identify if session was initiated via camera scan
   const params = new URLSearchParams(window.location.search);

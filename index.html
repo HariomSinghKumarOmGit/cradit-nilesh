@@ -606,17 +606,18 @@
       aria-hidden="true"
     />
 
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <!-- Supabase JS Client for Realtime Signaling -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script>
-      // SIGNALING SERVER CONFIG
-      // Replace this URL with your deployed signaling server (Render.com / Railway / Glitch)
-      // For local development, use: http://localhost:3001
-      window.SIGNALING_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? window.location.origin
-        : 'https://sentinoid-eco-signal.onrender.com';
+      // SUPABASE SIGNALING CONFIG
+      // Uses Supabase Realtime channels for WebRTC signaling.
+      // Works on Vercel serverless — no persistent WebSocket server needed.
+      window.ECO_SUPABASE_URL = 'https://chksljjadmcnmmacxoth.supabase.co';
+      window.ECO_SUPABASE_KEY = 'sb_publishable_1hKpwWnTFCAvYG0TJ0VFXQ_Ir3VUvY4';
     </script>
     <script src="rle.js"></script>
     <script src="huffman.js"></script>
+    <script src="signaling.js"></script>
     <script src="webrtc.js"></script>
     <script src="script.js"></script>
 

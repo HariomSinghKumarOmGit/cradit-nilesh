@@ -1,5 +1,20 @@
-const socket = io(window.SIGNALING_URL || window.location.origin, {
-  transports: ["websocket", "polling"]
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SENTINOID ECO — WebRTC P2P ENGINE
+   Uses Supabase Realtime for signaling (Vercel-compatible).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+// Initialize signaling via Supabase Realtime
+const SUPABASE_URL = window.ECO_SUPABASE_URL;
+const SUPABASE_KEY = window.ECO_SUPABASE_KEY;
+
+const socket = new SignalingClient(SUPABASE_URL, SUPABASE_KEY);
+
+socket.on("connect_error", (err) => {
+  console.warn("⚠️ Signaling server connection error:", err.message);
+  if ($("connText")) {
+    $("connText").textContent = "Server unreachable";
+    $("connDot").className = "conn-dot";
+  }
 });
 
 // STATE MANAGEMENT
@@ -100,7 +115,10 @@ socket.on("peer-left", () => {
 function createPC() {
   const peer = new RTCPeerConnection({
     // STUN: A lightweight server that reflects the user's public IP back to them
-    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+    ],
   });
   peer.onicecandidate = ({ candidate }) => {
     if (candidate)
@@ -607,12 +625,4 @@ function showReceiveUI(meta) {
   toast(emoji, "Incoming file!", meta.name + " · " + fmtBytes(meta.size));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    const myCode = $("my-code").textContent;
-    if (myCode && myCode !== "—") {
-      window.myRoom = myCode;
-      socket.emit("join-room", myCode);
-    }
-  }, 500);
-});
+// Room joining is handled by script.js DOMContentLoaded handler
