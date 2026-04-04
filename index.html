@@ -611,8 +611,8 @@
       // SIGNALING SERVER CONFIG
       // Replace this URL with your deployed signaling server (Render.com / Railway / Glitch)
       // For local development, use: http://localhost:3001
-      window.SIGNALING_URL = window.location.hostname === 'localhost'
-        ? 'http://localhost:3001'
+      window.SIGNALING_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? window.location.origin
         : 'https://sentinoid-eco-signal.onrender.com';
     </script>
     <script src="rle.js"></script>

@@ -61,12 +61,8 @@ function getLocalIP() {
 // hello 
 
 // STATIC ROUTING: Configures Express to serve the frontend UI and client-side logic.
-const root = process.cwd();//. changed
+const root = process.cwd();
 app.use(express.static(root));
-app.use(express.static(path.join(root, "public")));
-app.use(express.static(path.join(root, "src/compression")));
-app.use(express.static(path.join(root, "src/transport")));
-app.use(express.static(path.join(root, "src/ui")));
 
 // Explicitly send index.html for root requests
 app.get("/", (req, res) => {
