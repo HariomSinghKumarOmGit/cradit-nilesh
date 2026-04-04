@@ -19,6 +19,9 @@ class SignalingClient {
     this.callbacks = {};
     this.connected = false;
     this.peerCount = 0;
+    this._retryCount = 0;
+    this._maxRetries = 5;
+    this._retryDelay = 1500; // ms
 
     console.log("✅ Signaling client initialized (Supabase Realtime). My ID:", this.myId);
   }
@@ -38,25 +41,10 @@ class SignalingClient {
     }
   }
 
-  joinRoom(code) {
-    this.roomCode = code;
-
-    // Clean up any existing channel
-    if (this.channel) {
-      this.supabase.removeChannel(this.channel);
-    }
-
-    // Create a Supabase Realtime channel for this room
-    this.channel = this.supabase.channel(`eco-room-${code}`, {
-      config: {
-        broadcast: { self: false },
-        presence: { key: this.myId }
-      }
-    });
-
-    // Listen for broadcast messages
-    this.channel.on('broadcast', { event: 'signal' }, ({ payload }) => {
-      if (payload.from === this.myId) return; // Ignore own messages
+  _setupChannelListeners(channel) {
+    // Listen for broadcast messages (WebRTC signaling)
+    channel.on('broadcast', { event: 'signal' }, ({ payload }) => {
+      if (payload.from === this.myId) return;
 
       switch (payload.type) {
         case 'offer':
@@ -74,13 +62,13 @@ class SignalingClient {
     });
 
     // Track presence to know when peers join/leave
-    this.channel.on('presence', { event: 'sync' }, () => {
+    channel.on('presence', { event: 'sync' }, () => {
+      if (!this.channel) return;
       const state = this.channel.presenceState();
       const presenceCount = Object.keys(state).length;
       console.log(`📡 Room presence: ${presenceCount} peer(s)`, state);
 
       if (presenceCount > 2) {
-        // Room is full — more than 2 peers
         this._fireCallback('room-full');
         this.supabase.removeChannel(this.channel);
         this.channel = null;
@@ -88,10 +76,9 @@ class SignalingClient {
       }
 
       if (presenceCount === 2 && this.peerCount < 2) {
-        // Second peer just joined — initiate WebRTC
         console.log("🔔 Room ready — two peers present");
 
-        // Determine who initiates: the peer whose ID is alphabetically greater creates the offer
+        // Determine who initiates: alphabetically greater ID creates the offer
         const peerIds = Object.keys(state).sort();
         const iAmInitiator = peerIds[1] === this.myId;
 
@@ -107,25 +94,77 @@ class SignalingClient {
       this.peerCount = presenceCount;
     });
 
-    this.channel.on('presence', { event: 'leave' }, ({ key }) => {
+    channel.on('presence', { event: 'leave' }, ({ key }) => {
       if (key !== this.myId) {
         console.log("🔴 Peer left the room");
         this._fireCallback('peer-left');
       }
     });
+  }
+
+  joinRoom(code) {
+    this.roomCode = code;
+    this._retryCount = 0;
+    this._doJoinRoom(code);
+  }
+
+  _doJoinRoom(code) {
+    // Clean up any existing channel
+    if (this.channel) {
+      this.supabase.removeChannel(this.channel);
+      this.channel = null;
+    }
+
+    this.peerCount = 0;
+
+    // Create a Supabase Realtime channel for this room
+    const channel = this.supabase.channel(`eco-room-${code}`, {
+      config: {
+        broadcast: { self: false },
+        presence: { key: this.myId }
+      }
+    });
+
+    this._setupChannelListeners(channel);
 
     // Subscribe to the channel and track presence
-    this.channel.subscribe(async (status) => {
+    channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
+        this.channel = channel;
         this.connected = true;
+        this._retryCount = 0;
         console.log(`🏠 Joined room: ${code}`);
-        await this.channel.track({ user_id: this.myId, joined_at: Date.now() });
-        // Fire connect callback after room is joined
+
+        try {
+          await channel.track({ user_id: this.myId, joined_at: Date.now() });
+        } catch (err) {
+          console.warn("⚠️ Presence track failed:", err);
+        }
+
         this._fireCallback("connect");
+
       } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-        this.connected = false;
-        console.warn("⚠️ Channel error or closed");
-        this._fireCallback('connect_error', { message: 'Channel disconnected' });
+        // Retry with exponential backoff instead of immediately firing error
+        this._retryCount++;
+
+        if (this._retryCount <= this._maxRetries) {
+          const delay = this._retryDelay * this._retryCount;
+          console.log(`🔄 Channel not ready, retrying in ${delay}ms (attempt ${this._retryCount}/${this._maxRetries})...`);
+
+          // Clean up the failed channel
+          this.supabase.removeChannel(channel);
+
+          setTimeout(() => {
+            if (this.roomCode === code) {
+              this._doJoinRoom(code);
+            }
+          }, delay);
+        } else {
+          // All retries exhausted — fire the real error
+          this.connected = false;
+          console.error("❌ Signaling connection failed after all retries.");
+          this._fireCallback('connect_error', { message: 'Channel disconnected' });
+        }
       }
     });
   }
@@ -164,6 +203,7 @@ class SignalingClient {
       this.channel = null;
     }
     this.connected = false;
+    this.roomCode = null;
   }
 
   get id() {
