@@ -1,3 +1,5 @@
+https://sentinoid-eco.vercel.app/
+
 
 
 **** is a browser-based, peer-to-peer file transfer utility that never touches a server. Files travel directly from one device to another — compressed in memory, encrypted in transit, and gone without a trace once the session ends.
